@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react";
 import { Button, EditableText, InputGroup, Toaster } from "@blueprintjs/core";
 import "./App.css";
+
 const AppToaster = Toaster.create({
   position: "top",
 });
+
 function App() {
   const [users, setUsers] = useState([]);
-
   const [newName, setNewName] = useState("");
   const [newEmail, setNewEmail] = useState("");
   const [newWebsite, setNewWebsite] = useState("");
+
   useEffect(() => {
     fetch("https://jsonplaceholder.typicode.com/users")
       .then((response) => response.json())
@@ -20,6 +22,7 @@ function App() {
         console.error("Error fetching users:", error);
       });
   }, []);
+
   function addUser() {
     const name = newName.trim();
     const email = newEmail.trim();
@@ -59,12 +62,13 @@ function App() {
         });
     }
   }
+
   function onChangeHandler(id, key, value) {
-    setUsers((users) => {
-      return users.map((user) => {
-        return user.id === id ? { ...user, [key]: value } : user;
-      });
-    });
+    setUsers((users) =>
+      users.map((user) =>
+        user.id === id ? { ...user, [key]: value } : user
+      )
+    );
   }
 
   function handleUpdate(id) {
@@ -77,7 +81,7 @@ function App() {
       },
     })
       .then((response) => response.json())
-      .then((data) => {
+      .then(() => {
         AppToaster.show({
           message: "User updated successfully",
           intent: "success",
@@ -85,7 +89,7 @@ function App() {
         });
       })
       .catch((error) => {
-        console.error("Error update user:", error);
+        console.error("Error updating user:", error);
         AppToaster.show({
           message: "Failed to update user",
           intent: "danger",
@@ -93,40 +97,40 @@ function App() {
         });
       });
   }
-function handleDelete(id){
-  const user = users.find((user) => user.id === id);
-  fetch(`https://jsonplaceholder.typicode.com/users/${id}`, {
-    method: "DELETE",
-   
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      setUsers((users) => users.filter(user => user.id !== id));
-    
-      AppToaster.show({
-        message: "User deleted successfully",
-        intent: "success",
-        timeout: 3000,
-      });
+
+  function handleDelete(id) {
+    fetch(`https://jsonplaceholder.typicode.com/users/${id}`, {
+      method: "DELETE",
     })
-    .catch((error) => {
-      console.error("Error delete user:", error);
-      AppToaster.show({
-        message: "Failed to dalate user",
-        intent: "danger",
-        timeout: 3000,
+      .then(() => {
+        setUsers((users) => users.filter((user) => user.id !== id));
+        AppToaster.show({
+          message: "User deleted successfully",
+          intent: "success",
+          timeout: 3000,
+        });
+      })
+      .catch((error) => {
+        console.error("Error deleting user:", error);
+        AppToaster.show({
+          message: "Failed to delete user",
+          intent: "danger",
+          timeout: 3000,
+        });
       });
-    });
-}
+  }
+
   return (
     <div className="App">
       <table className="bp4-html-table modifier">
         <thead>
-          <th>ID</th>
-          <th>Name</th>
-          <th>Email</th>
-          <th>Website</th>
-          <th>Action</th>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Website</th>
+            <th>Action</th>
+          </tr>
         </thead>
         <tbody>
           {users.map((user) => (
@@ -139,7 +143,7 @@ function handleDelete(id){
                     onChangeHandler(user.id, "email", value)
                   }
                   value={user.email}
-                ></EditableText>
+                />
               </td>
               <td>
                 <EditableText
@@ -147,13 +151,16 @@ function handleDelete(id){
                     onChangeHandler(user.id, "website", value)
                   }
                   value={user.website}
-                ></EditableText>
+                />
               </td>
               <td>
                 <Button onClick={() => handleUpdate(user.id)} intent="primary">
                   Update
-                </Button>&nbsp;
-                <Button onClick={() => handleDelete(user.id)} intent="danger">Delete</Button>
+                </Button>
+                &nbsp;
+                <Button onClick={() => handleDelete(user.id)} intent="danger">
+                  Delete
+                </Button>
               </td>
             </tr>
           ))}
@@ -164,29 +171,23 @@ function handleDelete(id){
             <td>
               <InputGroup
                 placeholder="Enter your name..."
-                onChange={(e) => {
-                  setNewName(e.target.value);
-                }}
+                onChange={(e) => setNewName(e.target.value)}
                 value={newName}
-              ></InputGroup>
+              />
             </td>
             <td>
               <InputGroup
-                placeholder="Enter your mail..."
-                onChange={(e) => {
-                  setNewEmail(e.target.value);
-                }}
+                placeholder="Enter your email..."
+                onChange={(e) => setNewEmail(e.target.value)}
                 value={newEmail}
-              ></InputGroup>
+              />
             </td>
             <td>
               <InputGroup
                 placeholder="Enter your website..."
-                onChange={(e) => {
-                  setNewWebsite(e.target.value);
-                }}
+                onChange={(e) => setNewWebsite(e.target.value)}
                 value={newWebsite}
-              ></InputGroup>
+              />
             </td>
             <td>
               <Button intent="success" onClick={addUser}>
